@@ -2,11 +2,20 @@ package com.had0uken.sport_notifications_bot.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.sql.Timestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "usersDataTable")
 public class User implements Serializable {
 
@@ -24,65 +33,4 @@ public class User implements Serializable {
 
     private Timestamp registeredAt;
 
-    public User() {
-    }
-
-    public User(Long chatId, String firstName, String lastName, String username, Timestamp registeredAt) {
-        this.chatId = chatId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.registeredAt = registeredAt;
-    }
-
-    public Long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Timestamp getRegisteredAt() {
-        return registeredAt;
-    }
-
-    public void setRegisteredAt(Timestamp registeredAt) {
-        this.registeredAt = registeredAt;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "chatId=" + chatId +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", username='" + username + '\'' +
-                ", registeredAt=" + registeredAt +
-                '}';
-    }
 }
