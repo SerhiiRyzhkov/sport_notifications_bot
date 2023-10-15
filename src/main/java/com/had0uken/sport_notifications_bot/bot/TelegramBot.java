@@ -1,9 +1,15 @@
 package com.had0uken.sport_notifications_bot.bot;
 
+import com.had0uken.sport_notifications_bot.TestJson;
 import com.had0uken.sport_notifications_bot.config.BotConfig;
+import com.had0uken.sport_notifications_bot.enums.Country;
+import com.had0uken.sport_notifications_bot.model.League;
 import com.had0uken.sport_notifications_bot.model.User;
+import com.had0uken.sport_notifications_bot.service.LeagueService;
 import com.had0uken.sport_notifications_bot.service.UserService;
 import com.had0uken.sport_notifications_bot.dataSources.Scorer;
+import com.had0uken.sport_notifications_bot.utilities.JsonParser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,20 +28,25 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
-    UserService userService;
+    private UserService userService;/*
+    @Autowired
+    private LeagueService leagueService;*/
 
     @Autowired
-    Scorer scorer;
+    private Scorer scorer;
 
     private final BotConfig botConfig;
     private static final String ERROR_TEXT = "Error occurred: ";
+
 
     private static final String HELP_TEXT = """
            
@@ -81,67 +92,92 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        String answer;
-        if (update.hasMessage() && update.getMessage().hasText())
-        {
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
-            switch (messageText) {
-                case "/start" -> {
-                    registerUser(update.getMessage());
-                    answer = "Hello, " + update.getMessage().getChat().getFirstName() + "!";
-                    sendMessage(chatId, answer);
-                }
-                case "/mydata" -> {
-                    sendMessage(chatId, getData(chatId));
-                }
-                case "/help" -> {
-                    sendMessage(chatId, HELP_TEXT);
-                }
-                case "/deletedata" -> {
-                    userService.delete(chatId);
-                    answer = update.getMessage().getChat().getFirstName() + ", your data was deleted";
-                    sendMessage(chatId, answer);
-                }
 
-                case "/addTeam" ->{
-                    sendMessage(chatId,addTeam(chatId));
-                }
-                case "/test" ->{
-                    try {
-                        sendMessage(chatId, scorer.getList());
-                       // scorer.getList();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                default -> sendMessage(chatId, "sorry, command does not exists");
+
+        if (update.hasCallbackQuery()){
+            EditMessageText editMessageText = new EditMessageText();
+            editMessageText.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
+            editMessageText.setChatId(update.getCallbackQuery().getMessage().getChatId());
+          callBackHandler(update, editMessageText);
+        }
+
+        else if(update.hasMessage() && update.getMessage().hasText())
+        {
+            commandsHandler(update);
+        }
+    }
+
+    private void callBackHandler(Update update, EditMessageText editMessageText) {
+        /*if(leagueService.getAllLeagues().stream().
+                anyMatch(el->el.getCountry().toString().equals(update.getCallbackQuery().getData())))
+        selectTeam(update, editMessageText);*/
+    }
+
+    private void selectTeam(Update update, EditMessageText editMessageText) {
+        editMessageText.setText("You have selected "+ update.getCallbackQuery().getData());
+        executeMessage(editMessageText);
+    }
+
+    private void commandsHandler(Update update){
+        String answer;
+        String messageText = update.getMessage().getText();
+        long chatId = update.getMessage().getChatId();
+        switch (messageText) {
+            case "/start" -> {
+                registerUser(update.getMessage());
+                answer = "Hello, " + update.getMessage().getChat().getFirstName() + "!";
+                sendMessage(chatId, answer);
+            }
+            case "/mydata" -> {
+                sendMessage(chatId, getData(chatId));
+            }
+            case "/help" -> {
+                sendMessage(chatId, HELP_TEXT);
+            }
+            case "/deletedata" -> {
+                userService.delete(chatId);
+                answer = update.getMessage().getChat().getFirstName() + ", your data was deleted";
+                sendMessage(chatId, answer);
             }
 
+            case "/addTeam" ->{
+                addTeam(chatId);
+            }
+            case "/test" ->{
+                System.out.println("here11");
+            }
+            default -> sendMessage(chatId, "sorry, command does not exists");
         }
     }
 
 
+    private void addTeam(long chatId) {
+       SendMessage sendMessage = new SendMessage();
+       sendMessage.setChatId(chatId);
+       sendMessage.setText("Select a country: ");
 
-    private String addTeam(long chatId) {
-        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+       List<Country> countries = Arrays.stream(Country.values()).toList();
 
-        List<String> teams = new ArrayList<>(List.of("Milan,MU,Chelsea"));
-
-        for(String t:teams)
-        {
-            List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-            InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setCallbackData(t);
-            rowInLine.add(button);
-            rowsInline.add(rowInLine);
-        }
-        markupInline.setKeyboard(rowsInline);
-
-
-        markupInline.setKeyboard(rowsInline);
-        return "Team was added";
+       InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+       List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+       List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+       int count = 0;
+       for(Country c:countries)
+       {
+           InlineKeyboardButton button = new InlineKeyboardButton();
+           button.setText(c.toString());
+           button.setCallbackData(c.toString());
+           rowInLine.add(button);
+           if(++count==3){
+               rowsInLine.add(rowInLine);
+               rowInLine=new ArrayList<>();
+               count=0;
+           }
+       }
+       rowsInLine.add(rowInLine);
+       inlineKeyboardMarkup.setKeyboard(rowsInLine);
+       sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+       executeMessage(sendMessage);
     }
 
 
