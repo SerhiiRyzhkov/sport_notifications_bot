@@ -1,12 +1,15 @@
 package com.had0uken.sport_notifications_bot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,17 +18,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Stage")
-public class Stage implements Serializable {
+@Table(name = "leagueStages")
+public class LeagueStage implements Serializable {
+    private static final long serialVersionUID = 5787545020193329483L;
+
     @Id
     @JsonProperty("Sid")
-    private String sid;
+    private String Sid;
 
     @JsonProperty("Snm")
-    private String snm;
+    private String Snm;
 
     @JsonProperty("Scd")
-    private String scd;
+    private String Scd;
 
     @JsonProperty("badgeUrl")
     private String badgeUrl;
@@ -34,48 +39,47 @@ public class Stage implements Serializable {
     private String firstColor;
 
     @JsonProperty("Cid")
-    private String cid;
+    private String Cid;
 
     @JsonProperty("Cnm")
-    private String cnm;
+    private String Cnm;
 
     @JsonProperty("Csnm")
-    private String csnm;
+    private String Csnm;
 
     @JsonProperty("Ccd")
-    private String ccd;
+    private String Ccd;
 
     @JsonProperty("CompId")
-    private String compId;
+    private String CompId;
 
     @JsonProperty("CompN")
-    private String compN;
+    private String CompN;
 
     @JsonProperty("CompD")
-    private String compD;
+    private String CompD;
 
     @JsonProperty("CompST")
-    private String compST;
+    private String CompST;
 
     @JsonProperty("Scu")
-    private int scu;
+    private int Scu;
 
     @JsonProperty("Sds")
-    private String sds;
+    private String Sds;
 
     @JsonProperty("Chi")
-    private int chi;
+    private int Chi;
 
     @JsonProperty("Shi")
-    private int shi;
+    private int Shi;
 
     @JsonProperty("Ccdiso")
-    private String ccdiso;
+    private String Ccdiso;
 
     @JsonProperty("Sdn")
-    private String sdn;
+    private String Sdn;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "stage")
-    @JsonProperty("Events")
-    private List<Event> events;
+    @JsonProperty("LeagueTable")
+    private LeagueTable LeagueTable;
 }

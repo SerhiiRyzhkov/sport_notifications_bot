@@ -3,13 +3,11 @@ package com.had0uken.sport_notifications_bot.bot;
 import com.had0uken.sport_notifications_bot.TestJson;
 import com.had0uken.sport_notifications_bot.config.BotConfig;
 import com.had0uken.sport_notifications_bot.enums.Country;
-import com.had0uken.sport_notifications_bot.model.League;
+import com.had0uken.sport_notifications_bot.model.LeagueData;
 import com.had0uken.sport_notifications_bot.model.User;
-import com.had0uken.sport_notifications_bot.service.LeagueService;
 import com.had0uken.sport_notifications_bot.service.UserService;
 import com.had0uken.sport_notifications_bot.dataSources.Scorer;
-import com.had0uken.sport_notifications_bot.utilities.JsonParser;
-import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,9 +35,7 @@ import java.util.stream.Collectors;
 public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
-    private UserService userService;/*
-    @Autowired
-    private LeagueService leagueService;*/
+    private UserService userService;
 
     @Autowired
     private Scorer scorer;
@@ -90,6 +86,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         return botConfig.getToken();
     }
 
+    @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
 
@@ -118,7 +115,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(editMessageText);
     }
 
-    private void commandsHandler(Update update){
+    private void commandsHandler(Update update) throws IOException {
         String answer;
         String messageText = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
@@ -144,8 +141,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 addTeam(chatId);
             }
             case "/test" ->{
-                System.out.println("here11");
-            }
+            testCase(chatId);
+        }
             default -> sendMessage(chatId, "sorry, command does not exists");
         }
     }
@@ -223,6 +220,19 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage.setChatId(chatId);
         sendMessage.setText(textToSend);
         executeMessage(sendMessage);
+    }
+
+
+    private void testCase(long chatId) throws IOException {
+        TestJson testJson = new TestJson();
+        System.out.println("here!!!!!");
+        LeagueData leagueData = LeagueData.parseJson(testJson.getJsonUkraine());
+        System.out.println("here2!!!");
+        System.out.println(leagueData);
+        System.out.println(leagueData.getStages().get(0).getCnm());
+        leagueData.getStages().get(0).getLeagueTable().getL().get(0).getTables().get(0).getTeam().forEach(el-> System.out.println(el.getTnm()));
+
+
     }
 
 

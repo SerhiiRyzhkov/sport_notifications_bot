@@ -7,17 +7,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+/*@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "leagues")
-public class League {
-    @Id
+@Table(name = "leagues")*/
+public class League implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 7722782480174879127L;
+/*    @Id
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -26,5 +30,5 @@ public class League {
     private String name;
 
     @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Club> clubs = new ArrayList<>();
+    private List<Club> clubs = new ArrayList<>();*/
 }

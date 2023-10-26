@@ -7,6 +7,7 @@ import com.had0uken.sport_notifications_bot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isExist(Long chatId) {
-        return userRepository.existsById(chatId);
+        return   userRepository.existsById(chatId);
     }
 
     @Override
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService {
         if(userOptional.isPresent())return userOptional.get().toString();
         else return "Your data is clear";
     }
+
 
 
 }
