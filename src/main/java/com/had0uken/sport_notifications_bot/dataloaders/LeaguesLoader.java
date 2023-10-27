@@ -15,9 +15,12 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class LeaguesLoader
-        //implements CommandLineRunner
+public class LeaguesLoader implements CommandLineRunner
 {
+    @Override
+    public void run(String... args) throws Exception {
+
+    }
 
   /*  private final LeagueRepository leagueRepository;
 

@@ -2,7 +2,9 @@ package com.had0uken.sport_notifications_bot.bot;
 
 import com.had0uken.sport_notifications_bot.TestJson;
 import com.had0uken.sport_notifications_bot.config.BotConfig;
+import com.had0uken.sport_notifications_bot.enums.Category;
 import com.had0uken.sport_notifications_bot.enums.Country;
+import com.had0uken.sport_notifications_bot.model.League;
 import com.had0uken.sport_notifications_bot.model.LeagueData;
 import com.had0uken.sport_notifications_bot.model.User;
 import com.had0uken.sport_notifications_bot.service.UserService;
@@ -224,15 +226,18 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 
     private void testCase(long chatId) throws IOException {
-        TestJson testJson = new TestJson();
+ /*       TestJson testJson = new TestJson();
         System.out.println("here!!!!!");
         LeagueData leagueData = LeagueData.parseJson(testJson.getJsonUkraine());
         System.out.println("here2!!!");
         System.out.println(leagueData);
         System.out.println(leagueData.getStages().get(0).getCnm());
         leagueData.getStages().get(0).getLeagueTable().getL().get(0).getTables().get(0).getTeam().forEach(el-> System.out.println(el.getTnm()));
+*/
 
-
+        League league = new League();
+        league.setScd("premier-league");
+        System.out.println(scorer.getTeamsByCategoryAndLeague(Category.SOCCER, league));
     }
 
 

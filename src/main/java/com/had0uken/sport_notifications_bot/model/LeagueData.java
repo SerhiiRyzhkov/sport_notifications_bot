@@ -20,7 +20,7 @@ public class LeagueData implements Serializable {
     @Serial
     private static final long serialVersionUID = -2070729524542282799L;
     @JsonProperty("Stages")
-    private List<LeagueStage> Stages;
+    private List<League> Stages;
 
 
     public static LeagueData parseJson(String json){

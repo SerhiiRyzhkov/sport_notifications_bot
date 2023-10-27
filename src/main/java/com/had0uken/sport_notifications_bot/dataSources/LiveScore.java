@@ -1,4 +1,13 @@
 package com.had0uken.sport_notifications_bot.dataSources;
+import com.had0uken.sport_notifications_bot.enums.Category;
+import com.had0uken.sport_notifications_bot.enums.Country;
+import com.had0uken.sport_notifications_bot.model.League;
+import com.had0uken.sport_notifications_bot.model.LeagueData;
+import com.had0uken.sport_notifications_bot.model.Team;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -7,54 +16,50 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class LiveScore implements Scorer {
-
 
     @Value("${account.key}")
     String key;
 
     @Value("${account.host}")
     String host;
+
     @Override
-    public String getList() throws IOException {
-        URL apiUrl = new URL("https://livescore6.p.rapidapi.com/matches/v2/list-live?Category=soccer&Timezone=-7");
+    public List<Team> getTeamsByCategoryAndLeague(Category category, League league) throws IOException {
+        OkHttpClient client = new OkHttpClient();
 
-        // Open a connection to the URL
-        HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+        String url = "https://livescore6.p.rapidapi.com/matches/v2/get-table?Category="+
+                category.toString().toLowerCase()+
+                "&Eid="+
+                league.getSid();
 
-        // Set the request method to GET
-        connection.setRequestMethod("GET");
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("X-RapidAPI-Key", key)
+                .addHeader("X-RapidAPI-Host", host)
+                .build();
 
-        // Set the request headers
-        connection.setRequestProperty("X-RapidAPI-Key", key);
-        connection.setRequestProperty("X-RapidAPI-Host", host);
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful()) {
+                ResponseBody responseBody = response.body();
+                if (responseBody != null) {
 
-        // Set the timeout for the connection (optional)
-        connection.setConnectTimeout(5000); // 5 seconds
-        connection.setReadTimeout(5000);    // 5 seconds
 
-        // Get the response code
-        int responseCode = connection.getResponseCode();
-
-        // Check if the response code is OK (200)
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            // Create a BufferedReader to read the response
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-
-            // Read the response line by line
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+                    System.out.println();
+                    return new ArrayList<>(LeagueData.parseJson(responseBody.string()).getStages().get(0).getLeagueTable().
+                            getL().get(0).getTables().get(0).getTeam());
+                }
+            } else {
+                System.out.println("HTTP request failed with status code: " + response.code());
             }
-            in.close();
-
-            // Return the response as a string
-            return response.toString();
-        } else {
-            // Handle the error, e.g., by throwing an exception or returning an error message
-            throw new IOException("HTTP GET request failed with response code: " + responseCode);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 }

@@ -22,7 +22,7 @@ public class TableData implements Serializable {
     @JsonProperty("LTT")
     private int LTT;
     @JsonProperty("team")
-    private List<TeamData> team;
+    private List<Team> team;
 
     @JsonIgnore
     private List<PhrX> phrX; // You should replace "SomeOtherType" with the actual data type of "phrX"
