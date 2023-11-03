@@ -5,8 +5,8 @@ import com.had0uken.sport_notifications_bot.config.BotConfig;
 import com.had0uken.sport_notifications_bot.enums.Category;
 import com.had0uken.sport_notifications_bot.enums.Country;
 import com.had0uken.sport_notifications_bot.model.League;
-import com.had0uken.sport_notifications_bot.model.LeagueData;
 import com.had0uken.sport_notifications_bot.model.User;
+import com.had0uken.sport_notifications_bot.repository.LeagueRepository;
 import com.had0uken.sport_notifications_bot.service.UserService;
 import com.had0uken.sport_notifications_bot.dataSources.Scorer;
 import lombok.SneakyThrows;
@@ -40,10 +40,16 @@ public class TelegramBot extends TelegramLongPollingBot {
     private UserService userService;
 
     @Autowired
+    private LeagueRepository leagueRepository;
+
+
+    @Autowired
     private Scorer scorer;
 
     private final BotConfig botConfig;
     private static final String ERROR_TEXT = "Error occurred: ";
+
+
 
 
     private static final String HELP_TEXT = """
@@ -235,9 +241,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         leagueData.getStages().get(0).getLeagueTable().getL().get(0).getTables().get(0).getTeam().forEach(el-> System.out.println(el.getTnm()));
 */
 
-        League league = new League();
-        league.setScd("premier-league");
-        System.out.println(scorer.getTeamsByCategoryAndLeague(Category.SOCCER, league));
+      /*  League league = new League();
+        league.setLeague_id(111L);
+        league.setLeague_name("test_league");
+        System.out.println("here!!");
+        System.out.println(league);
+        leagueRepository.save(league);
+        System.out.println("saved!");*/
     }
 
 

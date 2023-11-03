@@ -21,94 +21,38 @@ import java.util.List;
 public class League implements Serializable {
     private static final long serialVersionUID = 5787545020193329483L;
 
-    @Id
     @JsonProperty("Sid")
     @Column(name = "league_id")
-    private Long Sid;
+    @Id
+    private Long league_id;
 
+    @JsonProperty("Cnm")
     @Column(name = "league_name")
-    @JsonProperty("Snm")
-    private String Snm;
+    private String league_name;
 
 
     @JsonProperty("Scd")
-    private String Scd;
+    @Column(name = "league_code")
+    private String league_code;
 
-    @Transient
-    @JsonProperty("badgeUrl")
-    private String badgeUrl;
-
-    @Transient
-    @JsonProperty("firstColor")
-    private String firstColor;
-
-    @Transient
     @JsonProperty("Cid")
-    private String Cid;
-
-    @Transient
-    @JsonProperty("Cnm")
-    private String Cnm;
-
-    @Transient
-    @JsonProperty("Csnm")
-    private String Csnm;
-
+    @Column(name = "country_id")
+    private Long country_id;
 
     @JsonProperty("Ccd")
-    private String Ccd;
+    @Column(name = "country_code")
+    private String country_code;
 
-    @Transient
     @JsonProperty("CompId")
-    private String CompId;
+    @Column(name = "competition_id")
+    private Long competition_id;
 
-    @Column(name = "league_country")
     @JsonProperty("CompN")
-    private String CompN;
+    @Column(name = "competition_name")
+    private String competition_name;
 
-    @Transient
-    @JsonProperty("CompD")
-    private String CompD;
 
-    @Transient
-    @JsonProperty("CompST")
-    private String CompST;
-
-    @Transient
-    @JsonProperty("Scu")
-    private int Scu;
-
-    @Transient
-    @JsonProperty("Sds")
-    private String Sds;
-
-    @Transient
-    @JsonProperty("Chi")
-    private int Chi;
-
-    @Transient
-    @JsonProperty("Shi")
-    private int Shi;
-
-    @Transient
-    @JsonProperty("Ccdiso")
-    private String Ccdiso;
-
-    @Transient
     @JsonProperty("Sdn")
-    private String Sdn;
-
-    @Transient
-    @JsonProperty("LeagueTable")
-    private LeagueTable LeagueTable;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "league")
-    private List<Team> teams = new ArrayList<>();
-
-    public League(Long sid, String snm, String compN) {
-        Sid = sid;
-        Snm = snm;
-        CompN = compN;
-    }
+    @Column(name = "stage_name")
+    private String stage_name;
 }
